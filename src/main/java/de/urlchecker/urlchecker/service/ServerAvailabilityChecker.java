@@ -31,7 +31,6 @@ public class ServerAvailabilityChecker {
     @Scheduled(initialDelay = 1000, fixedRateString = "${server.interval}")
     @Async
     public void getCurrentServerStatus() {
-
         List<String> urls = ServerStatusService.getUrlsFromParameter(serverUrls);
 
         ServerStatusService.printServerStatusHeader();
@@ -40,8 +39,7 @@ public class ServerAvailabilityChecker {
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setRequestMethod("HEAD");
-                connection.connect();
-                ServerStatus serverStatus = new ServerStatus(url, true);
+                ServerStatus serverStatus = new ServerStatus(url, connection.getResponseCode() == HttpURLConnection.HTTP_OK);
                 serverStatus.printServerStatus();
             } catch (IOException e) {
                 ServerStatus serverStatus = new ServerStatus(url, false);
